@@ -69,6 +69,14 @@ public class NoiseBall3 : MonoBehaviour
         set { _smoothness = value; }
     }
 
+    [SerializeField, ColorUsage(false, true)]
+    Color _emissionColor = Color.white;
+
+    public Color emissionColor {
+        get { return _emissionColor; }
+        set { _emissionColor = value; }
+    }
+
     #endregion
 
     #region Hidden attribute
@@ -116,7 +124,9 @@ public class NoiseBall3 : MonoBehaviour
         _material.SetColor("_Color", _color);
         _material.SetFloat("_Metallic", _metallic);
         _material.SetFloat("_Smoothness", _smoothness);
+        _material.SetColor("_Emission", _emissionColor);
 
+        _material.SetInt("_TriangleCount", _triangleCount);
         _material.SetFloat("_LocalTime", time * _shuffleSpeed);
         _material.SetFloat("_Extent", _triangleExtent);
         _material.SetFloat("_NoiseAmplitude", _noiseAmplitude);

@@ -45,6 +45,7 @@ Shader "Hidden/NoiseBall3"
             float4 vertex : POSITION;
             float3 normal : NORMAL;
             float4 tangent : TANGENT;
+            float4 color : COLOR;
             float4 texcoord1 : TEXCOORD1;
             float4 texcoord2 : TEXCOORD2;
             uint vid : SV_VertexID;
@@ -53,12 +54,15 @@ Shader "Hidden/NoiseBall3"
         struct Input
         {
             float vface : VFACE;
+            float4 color : COLOR;
         };
 
         half4 _Color;
         half _Smoothness;
         half _Metallic;
+        half3 _Emission;
 
+        uint _TriangleCount;
         float _LocalTime;
         float _Extent;
         float _NoiseAmplitude;
@@ -73,8 +77,11 @@ Shader "Hidden/NoiseBall3"
             uint t_idx = v.vid / 3;         // Triangle index
             uint v_idx = v.vid - t_idx * 3; // Vertex index
 
+            // Time dependent random number seed
+            uint seed = _LocalTime + (float)t_idx / _TriangleCount;
+            seed = ((seed << 16) + t_idx) * 4;
+
             // Random triangle on unit sphere
-            uint seed = ((uint)_LocalTime + t_idx) * 3;
             float3 v1 = RandomPoint(seed + 0);
             float3 v2 = RandomPoint(seed + 1);
             float3 v3 = RandomPoint(seed + 2);
@@ -100,6 +107,9 @@ Shader "Hidden/NoiseBall3"
             v.vertex.xyz = v_idx == 0 ? v1 : (v_idx == 1 ? v2 : v3);
             v.normal = normalize(cross(v2 - v1, v3 - v2));
 
+            // Random emission
+            v.color = 0.95 < Random(seed + 3);
+
             // Transform modification
             unity_ObjectToWorld = _LocalToWorld;
             unity_WorldToObject = _WorldToLocal;
@@ -111,6 +121,7 @@ Shader "Hidden/NoiseBall3"
             o.Metallic = _Metallic;
             o.Smoothness = _Smoothness;
             o.Normal = float3(0, 0, IN.vface < 0 ? -1 : 1); // back face support
+            o.Emission = _Emission * IN.color.rgb;
         }
 
         ENDCG
