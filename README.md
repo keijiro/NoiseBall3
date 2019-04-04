@@ -20,5 +20,6 @@ So, now the following methods are available for procedural approaches.
 - `DrawProcedural` - Executed via an intermediate renderer that supports the
   standard lighting/shadowing features.
 
-Now `DrawProcedural` is the handiest way to draw procedural objects with
-enabling the standard lighting model.
+It can be said that `DrawProcedural` is the handiest way to draw procedural
+objects with enabling the standard lighting model and the post processing
+effects.
